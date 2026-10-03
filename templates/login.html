@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCTV Attendance Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="auth-page">
+    <div class="auth-card">
+        <h1>Campus Attendance Admin</h1>
+        <form method="POST" action="{{ url_for('login_page') }}">
+            <div class="field-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" necessary>
+            </div>
+            <div class="field-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="primary-btn">Login</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="topbar">
+        <div class="brand">Campus CCTV Attendance</div>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('register_page') }}">Register</a>
+            <a href="{{ url_for('attendance_page') }}">Attendance</a>
+            <a href="{{ url_for('live_page') }}">Live CCTV</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Students</h3>
+                <p>{{ summary.total_students }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Today's Attendance</h3>
+                <p>{{ summary.today_attendance }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Attendance %</h3>
+                <p>{{ summary.attendance_percentage }}%</p>
+            </div>
+            <div class="stat-card">
+                <h3>Recent Entries</h3>
+                <p>{{ summary.recent_entries|length }}</p>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Registered Students</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Semester</th>
+                        <th>Phone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student.student_id }}</td>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.department }}</td>
+                        <td>{{ student.semester }}</td>
+                        <td>{{ student.phone }}</td>
+                        <td>
+                            <button class="danger-btn" data-delete-id="{{ student.student_id }}">Delete</button>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6">No students registered yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <section class="panel">
+            <h2>Recent Entries</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in summary.recent_entries %}
+                    <tr>
+                        <td>{{ record.student_id }}</td>
+                        <td>{{ record.student_name }}</td>
+                        <td>{{ record.date }}</td>
+                        <td>{{ record.entry_time }}</td>
+                        <td>{{ record.status }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5">No attendance recorded.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

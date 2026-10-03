@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live CCTV</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="topbar">
+        <div class="brand">Campus CCTV Attendance</div>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('register_page') }}">Register</a>
+            <a href="{{ url_for('attendance_page') }}">Attendance</a>
+            <a href="{{ url_for('live_page') }}">Live CCTV</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </nav>
+
+    <main class="container live-layout">
+        <section class="panel live-panel">
+            <h2>Live Camera Feed</h2>
+            <img id="cameraFeed" src="{{ url_for('video_feed') }}" alt="Live detection stream">
+        </section>
+        <aside class="panel status-panel">
+            <h3>Recognition Status</h3>
+            <div class="status-box">
+                <span id="statusName">Unknown</span>
+                <span id="statusId">-</span>
+                <span id="statusConfidence">0.00</span>
+            </div>
+        </aside>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

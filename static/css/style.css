@@ -1,0 +1,249 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(180deg, #0d1b2a, #1b263b);
+    color: #e5e7eb;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    background: rgba(15, 23, 42, 0.95);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-links {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.nav-links a {
+    color: #dbeafe;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.container {
+    width: min(1200px, calc(100% - 32px));
+    margin: 32px auto;
+}
+
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-card, .panel {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.auth-card {
+    width: min(500px, 90vw);
+    padding: 32px;
+}
+
+.auth-card h1 {
+    margin-top: 0;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+label {
+    font-weight: 600;
+}
+
+input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #475569;
+    background: #0f172a;
+    color: white;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 0.95rem;
+    transition: opacity 0.2s ease;
+}
+
+button:hover {
+    opacity: 0.95;
+}
+
+.primary-btn {
+    background: #3b82f6;
+    color: white;
+}
+
+.success-btn {
+    background: #22c55e;
+    color: white;
+}
+
+.danger-btn {
+    background: #ef4444;
+    color: white;
+}
+
+.inline-btn {
+    display: inline-block;
+    margin-bottom: 16px;
+    text-decoration: none;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.stat-card h3 {
+    margin: 0 0 8px;
+    font-size: 0.9rem;
+    color: #93c5fd;
+}
+
+.stat-card p {
+    font-size: 2rem;
+    margin: 0;
+    font-weight: bold;
+}
+
+.panel {
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.panel h2 {
+    margin-top: 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px 10px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    text-align: left;
+}
+
+.row-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+}
+
+.camera-box {
+    margin-top: 24px;
+    background: #020817;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(148,163,184,0.22);
+}
+
+#camera {
+    display: block;
+    width: 100%;
+    max-height: 480px;
+    background: #111827;
+}
+
+.capture-actions {
+    margin-top: 18px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.capture-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.capture-preview img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(148,163,184,0.2);
+}
+
+.message-box {
+    margin-top: 16px;
+    min-height: 20px;
+    color: #fca5a5;
+}
+
+.live-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(220px, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.live-panel img {
+    display: block;
+    width: 100%;
+    min-height: 320px;
+    border-radius: 12px;
+    background: #111827;
+}
+
+.status-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 1.25rem;
+}
+
+@media (max-width: 768px) {
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .live-layout {
+        grid-template-columns: 1fr;
+    }
+}

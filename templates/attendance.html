@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="topbar">
+        <div class="brand">Campus CCTV Attendance</div>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('register_page') }}">Register</a>
+            <a href="{{ url_for('attendance_page') }}">Attendance</a>
+            <a href="{{ url_for('live_page') }}">Live CCTV</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="panel">
+            <h2>Attendance Records</h2>
+            <a href="{{ url_for('export_attendance_csv') }}" class="primary-btn inline-btn">Export CSV</a>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Entry Time</th>
+                        <th>Camera</th>
+                        <th>Confidence</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td>{{ record.student_id }}</td>
+                        <td>{{ record.student_name }}</td>
+                        <td>{{ record.date }}</td>
+                        <td>{{ record.entry_time }}</td>
+                        <td>{{ record.camera_id }}</td>
+                        <td>{{ record.confidence }}</td>
+                        <td>{{ record.status }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7">No attendance records yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+</body>
+</html>
