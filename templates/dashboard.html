@@ -8,9 +8,9 @@
 </head>
 <body>
     <nav class="topbar">
-        <div class="brand">Campus CCTV Attendance</div>
+        <div class="brand">Campus Attendance Hub</div>
         <div class="nav-links">
-            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('dashboard') }}">Overview</a>
             <a href="{{ url_for('register_page') }}">Register</a>
             <a href="{{ url_for('attendance_page') }}">Attendance</a>
             <a href="{{ url_for('live_page') }}">Live CCTV</a>
@@ -19,17 +19,22 @@
     </nav>
 
     <main class="container">
+        <section class="welcome-bar">
+            <h2>Good day, admin.</h2>
+            <p>Here is a quick overview of campus attendance today.</p>
+        </section>
+
         <section class="stats-grid">
             <div class="stat-card">
                 <h3>Total Students</h3>
                 <p>{{ summary.total_students }}</p>
             </div>
             <div class="stat-card">
-                <h3>Today's Attendance</h3>
+                <h3>Marked Today</h3>
                 <p>{{ summary.today_attendance }}</p>
             </div>
             <div class="stat-card">
-                <h3>Attendance %</h3>
+                <h3>Attendance Rate</h3>
                 <p>{{ summary.attendance_percentage }}%</p>
             </div>
             <div class="stat-card">
@@ -39,7 +44,7 @@
         </section>
 
         <section class="panel">
-            <h2>Registered Students</h2>
+            <h2>Student Directory</h2>
             <table>
                 <thead>
                     <tr>

@@ -170,9 +170,10 @@ def live_status():
 @login_required
 def video_feed():
     try:
-        camera_manager.start()
-    except RuntimeError as exc:
-        return Response(str(exc), mimetype="text/plain")
+        if camera_manager.cap is None:
+            camera_manager.start()
+    except RuntimeError:
+        logger.warning("Camera feed unavailable; continuing with placeholder stream.")
     return Response(camera_manager.generate_frames(), mimetype="multipart/x-mixed-replace; boundary=frame")
 
 

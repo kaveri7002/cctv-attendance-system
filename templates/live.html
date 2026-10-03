@@ -8,9 +8,9 @@
 </head>
 <body>
     <nav class="topbar">
-        <div class="brand">Campus CCTV Attendance</div>
+        <div class="brand">Campus Attendance Hub</div>
         <div class="nav-links">
-            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('dashboard') }}">Overview</a>
             <a href="{{ url_for('register_page') }}">Register</a>
             <a href="{{ url_for('attendance_page') }}">Attendance</a>
             <a href="{{ url_for('live_page') }}">Live CCTV</a>
@@ -20,15 +20,16 @@
 
     <main class="container live-layout">
         <section class="panel live-panel">
-            <h2>Live Camera Feed</h2>
+            <h2>Live Entry Monitor</h2>
+            <p class="section-note">Faces detected at the entrance will appear here with recognition status.</p>
             <img id="cameraFeed" src="{{ url_for('video_feed') }}" alt="Live detection stream">
         </section>
         <aside class="panel status-panel">
             <h3>Recognition Status</h3>
             <div class="status-box">
-                <span id="statusName">Unknown</span>
-                <span id="statusId">-</span>
-                <span id="statusConfidence">0.00</span>
+                <span id="statusName" class="status-pill neutral">Unknown</span>
+                <span id="statusId">ID: -</span>
+                <span id="statusConfidence">Confidence: 0.00</span>
             </div>
         </aside>
     </main>

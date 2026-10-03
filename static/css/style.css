@@ -5,7 +5,7 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(180deg, #0d1b2a, #1b263b);
+    background: linear-gradient(180deg, #0f172a, #111827 35%, #0b1220);
     color: #e5e7eb;
 }
 
@@ -16,17 +16,25 @@ body {
     padding: 20px 30px;
     background: rgba(15, 23, 42, 0.95);
     border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .brand {
     font-size: 1.5rem;
     font-weight: bold;
+    letter-spacing: 0.02em;
 }
 
 .nav-links {
     display: flex;
     gap: 18px;
     flex-wrap: wrap;
+}
+
+.nav-links a:hover {
+    color: #93c5fd;
 }
 
 .nav-links a {
@@ -57,12 +65,34 @@ body {
 .auth-card {
     width: min(500px, 90vw);
     padding: 32px;
+    text-align: center;
+}
+
+.brand-mark {
+    display: inline-flex;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    background: rgba(59, 130, 246, 0.12);
+    border: 2px solid rgba(147, 197, 253, 0.5);
+    color: #dbeafe;
+    font-size: 2rem;
+    margin-bottom: 18px;
 }
 
 .auth-card h1 {
     margin-top: 0;
-    margin-bottom: 24px;
+    margin-bottom: 8px;
     text-align: center;
+    font-size: clamp(2rem, 4vw, 2.5rem);
+}
+
+.subtitle,
+.section-note {
+    color: #cbd5e1;
+    margin: 0 0 18px;
 }
 
 .field-group {
@@ -91,7 +121,11 @@ button {
     border-radius: 10px;
     padding: 12px 18px;
     font-size: 0.95rem;
-    transition: opacity 0.2s ease;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+button:hover {
+    transform: translateY(-1px);
 }
 
 button:hover {
@@ -148,10 +182,27 @@ button:hover {
 .panel {
     padding: 20px;
     margin-bottom: 24px;
+    border-radius: 16px;
 }
 
 .panel h2 {
     margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.welcome-bar {
+    margin-bottom: 22px;
+    padding: 6px 0;
+}
+
+.welcome-bar h2 {
+    margin: 0 0 6px;
+    font-size: 1.8rem;
+}
+
+.welcome-bar p {
+    margin: 0;
+    color: #cbd5e1;
 }
 
 table {
@@ -233,7 +284,24 @@ th, td {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-weight: bold;
+    background: rgba(148, 163, 184, 0.18);
+    color: #f8fafc;
+}
+
+.status-pill.neutral {
+    background: rgba(59, 130, 246, 0.14);
+    color: #bfdbfe;
 }
 
 @media (max-width: 768px) {

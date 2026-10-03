@@ -8,9 +8,9 @@
 </head>
 <body>
     <nav class="topbar">
-        <div class="brand">Campus CCTV Attendance</div>
+        <div class="brand">Campus Attendance Hub</div>
         <div class="nav-links">
-            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('dashboard') }}">Overview</a>
             <a href="{{ url_for('register_page') }}">Register</a>
             <a href="{{ url_for('attendance_page') }}">Attendance</a>
             <a href="{{ url_for('live_page') }}">Live CCTV</a>
@@ -20,7 +20,8 @@
 
     <main class="container">
         <section class="panel">
-            <h2>Attendance Records</h2>
+            <h2>Attendance Log</h2>
+            <p class="section-note">Review all entry records and export the data for reporting.</p>
             <a href="{{ url_for('export_attendance_csv') }}" class="primary-btn inline-btn">Export CSV</a>
             <table>
                 <thead>
