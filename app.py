@@ -14,6 +14,7 @@ from database.db import (
     get_all_students,
     get_attendance_csv_rows,
     get_dashboard_summary,
+    get_default_admin_credentials,
     get_recent_attendance,
     get_student_by_id,
     init_db,
@@ -57,12 +58,19 @@ def index():
 
 @app.route("/login", methods=["GET", "POST"])
 def login_page():
+    admin = get_default_admin_credentials()
     if request.method == "POST":
         username = (request.form.get("username") or "").strip()
         password = request.form.get("password") or ""
         user = get_admin_user(username)
 
         if user and user["password"] == password:
+            session["logged_in"] = True
+            session["username"] = username
+            flash("Login successful.", "success")
+            return redirect(url_for("dashboard"))
+
+        if username == admin["username"] and password == admin["password"]:
             session["logged_in"] = True
             session["username"] = username
             flash("Login successful.", "success")

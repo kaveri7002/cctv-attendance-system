@@ -97,10 +97,12 @@ python app.py
 
 Then open `http://127.0.0.1:5000` to access the login page.
 
-Default admin credentials:
+Default admin credentials are loaded from the environment file (`.env`). You can change them here:
 
-- Username: `admin`
-- Password: `admin123`
+- `ADMIN_USERNAME=admin`
+- `ADMIN_PASSWORD=admin123`
+
+For a production deployment, set unique values in `.env` and do not share them in source control.
 
 ## Registering students
 

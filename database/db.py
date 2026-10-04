@@ -1,10 +1,22 @@
 import json
+import os
 import sqlite3
 from datetime import datetime
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 DB_PATH = BASE_DIR / "database" / "attendance.db"
+
+
+def get_default_admin_credentials():
+    return {
+        "username": os.getenv("ADMIN_USERNAME", "admin"),
+        "password": os.getenv("ADMIN_PASSWORD", "admin123"),
+    }
 
 
 def get_connection():
@@ -71,11 +83,13 @@ def init_db():
             """
         )
 
+        admin = get_default_admin_credentials()
         conn.execute(
             """
             INSERT OR IGNORE INTO admin_users (username, password, name)
-            VALUES ('admin', 'admin123', 'Administrator')
-            """
+            VALUES (?, ?, 'Administrator')
+            """,
+            (admin["username"], admin["password"]),
         )
 
 
