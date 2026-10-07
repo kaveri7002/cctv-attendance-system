@@ -28,12 +28,17 @@ from registration.register_student import register_student
 load_dotenv()
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "dev-secret-key-please-change")
 
+camera_source = os.getenv("CAMERA_SOURCE", os.getenv("CAMERA_INDEX", "0"))
+if camera_source.isdecimal():
+    camera_source = int(camera_source)
+
 camera_manager = CameraManager(
-    source=int(os.getenv("CAMERA_INDEX", 0)),
+    source=camera_source,
     threshold=float(os.getenv("RECOGNITION_THRESHOLD", 0.45)),
     camera_id="Entrance-01",
 )
@@ -54,6 +59,11 @@ def index():
     if session.get("logged_in"):
         return redirect(url_for("dashboard"))
     return redirect(url_for("login_page"))
+
+
+@app.route("/health")
+def health():
+    return jsonify({"status": "ok"})
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -217,8 +227,13 @@ def simulate_attendance():
 
 
 init_db()
-seed_demo_data()
+if os.getenv("TEST_MODE", "false").lower() == "true":
+    seed_demo_data()
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(
+        debug=os.getenv("FLASK_DEBUG", "false").lower() == "true",
+        host="0.0.0.0",
+        port=int(os.getenv("PORT", 5000)),
+    )

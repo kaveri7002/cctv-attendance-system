@@ -9,7 +9,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DB_PATH = BASE_DIR / "database" / "attendance.db"
+DB_PATH = Path(os.getenv("DB_PATH", str(BASE_DIR / "database" / "attendance.db")))
+DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 
 def get_default_admin_credentials():
@@ -20,7 +21,7 @@ def get_default_admin_credentials():
 
 
 def get_connection():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=30)
     conn.row_factory = sqlite3.Row
     return conn
 
