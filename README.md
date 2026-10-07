@@ -2,6 +2,12 @@
 
 This project provides a complete Flask-based CCTV attendance system for a college campus. It uses OpenCV + InsightFace for face detection and embedding generation, SQLite for persistent storage, and Flask templates for the dashboard and registration workflows.
 
+## Live demo
+
+Open the deployed app: https://cctv-attendance-system.onrender.com
+
+The free Render service may take a little time to wake after inactivity. Do not use the demo with real student data; the free service's SQLite storage is ephemeral.
+
 ## Features
 
 - Student registration with webcam capture
