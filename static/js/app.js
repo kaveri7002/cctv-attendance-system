@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         navigator.mediaDevices.getUserMedia({ video: true, audio: false })
             .then((stream) => {
                 camera.srcObject = stream;
+                registrationCameraReady = true;
             })
             .catch(() => {
                 const box = document.getElementById('messageBox');
@@ -33,9 +34,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('studentForm');
     const messageBox = document.getElementById('messageBox');
     const capturedImages = [];
+    let registrationCameraReady = false;
 
     if (captureButton && camera) {
         captureButton.addEventListener('click', () => {
+            if (!registrationCameraReady || camera.videoWidth === 0 || camera.videoHeight === 0) {
+                messageBox.textContent = 'Wait for camera access, then try capturing the face again.';
+                return;
+            }
+
             const canvas = document.getElementById('snapshotCanvas');
             const context = canvas.getContext('2d');
             context.drawImage(camera, 0, 0, canvas.width, canvas.height);
@@ -44,35 +51,62 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const img = document.createElement('img');
             img.src = dataUrl;
+            img.alt = `Captured face ${capturedImages.length}`;
             previewBox.appendChild(img);
-            messageBox.textContent = 'Face image captured successfully.';
+            messageBox.textContent = `Face image ${capturedImages.length} captured successfully.`;
         });
     }
 
     if (submitButton && form) {
-        submitButton.addEventListener('click', async () => {
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (capturedImages.length === 0) {
+                messageBox.textContent = 'Capture at least one face image before saving the student.';
+                return;
+            }
+
             const formData = new FormData(form);
             const payload = {
                 student: Object.fromEntries(formData.entries()),
                 images: capturedImages,
             };
 
-            const response = await fetch('/api/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            });
-            const result = await response.json();
+            submitButton.disabled = true;
+            submitButton.textContent = 'Saving...';
+            messageBox.textContent = 'Saving student and processing the face image...';
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                });
+                const contentType = response.headers.get('content-type') || '';
+                const result = contentType.includes('application/json')
+                    ? await response.json()
+                    : null;
 
-            if (result.success) {
+                if (!response.ok) {
+                    messageBox.textContent = result?.error ||
+                        `The server could not save the student (HTTP ${response.status}). Please try again.`;
+                    return;
+                }
+
+                if (!result?.success) {
+                    messageBox.textContent = result?.error || 'The server did not confirm the registration.';
+                    return;
+                }
+
                 messageBox.textContent = result.message;
                 form.reset();
                 previewBox.innerHTML = '';
                 capturedImages.length = 0;
-            } else {
-                messageBox.textContent = result.error || 'Registration failed.';
+            } catch {
+                messageBox.textContent = 'Could not contact the server. Check your connection and try again.';
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Save Student';
             }
         });
     }
