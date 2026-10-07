@@ -24,6 +24,81 @@ class CameraManager:
         self._lock = threading.Lock()
         self._stop = threading.Event()
         self._last_status = {"name": "Unknown", "student_id": "", "confidence": 0.0, "status": "Unknown"}
+        self._frame_confirmations = {}
+
+    def process_frame(self, frame, tracker_id):
+        faces = detect_faces(frame)
+        if len(faces) != 1:
+            with self._lock:
+                self._frame_confirmations.pop(tracker_id, None)
+            status = "No face detected" if not faces else "Multiple faces detected"
+            self._current_status("Unknown", "", 0.0, status)
+            return {**self.get_last_status(), "confirmed_frames": 0}
+
+        embedding = faces[0].get("embedding")
+        if embedding is None:
+            with self._lock:
+                self._frame_confirmations.pop(tracker_id, None)
+            self._current_status("Unknown", "", 0.0, "Face could not be encoded")
+            return {**self.get_last_status(), "confirmed_frames": 0}
+
+        match = find_best_match(
+            embedding,
+            get_known_embeddings(),
+            threshold=self.threshold,
+        )
+        if not match:
+            with self._lock:
+                self._frame_confirmations.pop(tracker_id, None)
+            self._current_status("Unknown", "", 0.0, "Unknown")
+            return {**self.get_last_status(), "confirmed_frames": 0}
+
+        student = match["student"]
+        student_id = student["student_id"]
+        student_name = student["name"]
+        confidence = round(match["score"], 4)
+
+        with self._lock:
+            confirmation = self._frame_confirmations.get(tracker_id)
+            if confirmation and confirmation["student_id"] == student_id:
+                confirmation["count"] += 1
+            else:
+                confirmation = {"student_id": student_id, "count": 1, "final_status": None}
+                self._frame_confirmations[tracker_id] = confirmation
+            confirmed_frames = confirmation["count"]
+            final_status = confirmation["final_status"]
+
+        if final_status:
+            self._current_status(student_name, student_id, confidence, final_status)
+            return {**self.get_last_status(), "confirmed_frames": confirmed_frames}
+
+        self._current_status(student_name, student_id, confidence, "Confirming recognition")
+        if confirmed_frames < 3:
+            return {**self.get_last_status(), "confirmed_frames": confirmed_frames}
+
+        if not mark_attendance(student_id, student_name, self.camera_id, confidence):
+            final_status = "Already Present"
+        else:
+            try:
+                student_record = get_student_by_id(student_id)
+                if student_record is None:
+                    final_status = "Attendance Marked - Student Contact Missing"
+                    logger.error("Student record missing for recognized ID %s.", student_id)
+                else:
+                    sms_result = send_sms(student_name, student_id, student_record["phone"])
+                    final_status = (
+                        "Attendance Marked"
+                        if sms_result["success"]
+                        else "Attendance Marked - SMS Not Sent"
+                    )
+            except (ValueError, RuntimeError):
+                final_status = "Attendance Marked - SMS Failed"
+                logger.exception("Attendance was recorded, but SMS delivery failed for %s.", student_id)
+
+        with self._lock:
+            confirmation["final_status"] = final_status
+        self._current_status(student_name, student_id, confidence, final_status)
+        return {**self.get_last_status(), "confirmed_frames": confirmed_frames}
 
     def _build_placeholder_frame(self, message="Camera unavailable"):
         frame = np.zeros((480, 640, 3), dtype=np.uint8)

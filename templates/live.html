@@ -21,8 +21,10 @@
     <main class="container live-layout">
         <section class="panel live-panel">
             <h2>Live Entry Monitor</h2>
-            <p class="section-note">Faces detected at the entrance will appear here with recognition status.</p>
-            <img id="cameraFeed" src="{{ url_for('video_feed') }}" alt="Live detection stream">
+            <p class="section-note">Allow camera access. Attendance is marked after the same registered face is confirmed across three frames.</p>
+            <video id="cameraFeed" autoplay playsinline muted></video>
+            <canvas id="frameCanvas" width="640" height="480" hidden></canvas>
+            <p id="liveMessage" class="message-box" role="status">Requesting camera access…</p>
         </section>
         <aside class="panel status-panel">
             <h3>Recognition Status</h3>
@@ -30,6 +32,7 @@
                 <span id="statusName" class="status-pill neutral">Unknown</span>
                 <span id="statusId">ID: -</span>
                 <span id="statusConfidence">Confidence: 0.00</span>
+                <span id="statusDetail">Waiting for camera</span>
             </div>
         </aside>
     </main>

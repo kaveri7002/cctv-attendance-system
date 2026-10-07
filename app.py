@@ -2,9 +2,12 @@ import csv
 import io
 import logging
 import os
+import uuid
 from datetime import datetime
 from functools import wraps
 
+import cv2
+import numpy as np
 from dotenv import load_dotenv
 from flask import Flask, Response, flash, jsonify, redirect, render_template, request, send_file, session, url_for
 
@@ -182,6 +185,27 @@ def export_attendance_csv():
 @login_required
 def live_status():
     return jsonify(camera_manager.get_last_status())
+
+
+@app.route("/api/process_frame", methods=["POST"])
+@login_required
+def process_live_frame():
+    image_bytes = request.get_data(cache=False)
+    if not image_bytes:
+        return jsonify({"error": "No camera frame was uploaded."}), 400
+    if len(image_bytes) > 2 * 1024 * 1024:
+        return jsonify({"error": "The camera frame is too large."}), 413
+
+    frame = cv2.imdecode(np.frombuffer(image_bytes, dtype=np.uint8), cv2.IMREAD_COLOR)
+    if frame is None:
+        return jsonify({"error": "The uploaded camera frame is not a valid image."}), 400
+
+    tracker_id = session.setdefault("recognition_tracker_id", uuid.uuid4().hex)
+    try:
+        return jsonify(camera_manager.process_frame(frame, tracker_id))
+    except Exception:
+        logger.exception("Failed to process a live camera frame.")
+        return jsonify({"error": "Face recognition failed while processing the camera frame."}), 500
 
 
 @app.route("/video_feed")

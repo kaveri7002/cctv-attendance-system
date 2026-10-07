@@ -272,12 +272,14 @@ th, td {
     align-items: start;
 }
 
-.live-panel img {
+.live-panel img,
+.live-panel video {
     display: block;
     width: 100%;
     min-height: 320px;
     border-radius: 12px;
     background: #111827;
+    object-fit: cover;
 }
 
 .status-box {

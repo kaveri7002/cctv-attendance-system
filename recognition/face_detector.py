@@ -32,7 +32,7 @@ def detect_faces(frame):
         return []
 
     try:
-        raw_faces = model.get(frame, max_num=1)
+        raw_faces = model.get(frame, max_num=0)
     except Exception as exc:
         logger.error("Face detection failed: %s", exc)
         return []

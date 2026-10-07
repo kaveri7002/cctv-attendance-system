@@ -81,12 +81,87 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusId = document.getElementById('statusId');
     const statusConfidence = document.getElementById('statusConfidence');
     if (statusName && statusId && statusConfidence) {
-        setInterval(async () => {
-            const response = await fetch('/api/live_status');
-            const status = await response.json();
+        const liveVideo = document.getElementById('cameraFeed');
+        const frameCanvas = document.getElementById('frameCanvas');
+        const liveMessage = document.getElementById('liveMessage');
+        const statusDetail = document.getElementById('statusDetail');
+        const canvasContext = frameCanvas.getContext('2d');
+        let cameraStream;
+        let processingFrame = false;
+
+        const updateStatus = (status) => {
             statusName.textContent = status.name || 'Unknown';
             statusId.textContent = status.student_id ? `ID: ${status.student_id}` : 'ID: -';
             statusConfidence.textContent = `Confidence: ${Number(status.confidence || 0).toFixed(2)}`;
-        }, 1500);
+            statusDetail.textContent = status.status || status.error || '';
+            if (liveMessage && status.error) {
+                liveMessage.textContent = status.error;
+            }
+        };
+
+        const processFrame = async () => {
+            if (!cameraStream || processingFrame || liveVideo.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+                return;
+            }
+
+            processingFrame = true;
+            try {
+                const scale = Math.min(1, 640 / liveVideo.videoWidth, 480 / liveVideo.videoHeight);
+                frameCanvas.width = Math.round(liveVideo.videoWidth * scale);
+                frameCanvas.height = Math.round(liveVideo.videoHeight * scale);
+                canvasContext.drawImage(liveVideo, 0, 0, frameCanvas.width, frameCanvas.height);
+                const blob = await new Promise((resolve) => frameCanvas.toBlob(resolve, 'image/jpeg', 0.75));
+                if (!blob) {
+                    throw new Error('Could not capture an image from the camera.');
+                }
+
+                const response = await fetch('/api/process_frame', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'image/jpeg' },
+                    body: blob,
+                });
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.error || 'Could not process the camera image.');
+                }
+                updateStatus(result);
+                if (liveMessage) {
+                    liveMessage.textContent = result.confirmed_frames && result.confirmed_frames < 3
+                        ? `Confirming face: ${result.confirmed_frames} of 3 frames`
+                        : result.status;
+                }
+            } catch (error) {
+                if (liveMessage) {
+                    liveMessage.textContent = error.message || 'Camera frame processing failed.';
+                }
+            } finally {
+                processingFrame = false;
+            }
+        };
+
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
+            .then((stream) => {
+                cameraStream = stream;
+                liveVideo.srcObject = stream;
+                if (liveMessage) {
+                    liveMessage.textContent = 'Camera connected. Looking for a registered student…';
+                }
+                window.setInterval(processFrame, 1000);
+            })
+            .catch((error) => {
+                const reason = error.name === 'NotAllowedError'
+                    ? 'Allow camera access in your browser to use live recognition.'
+                    : 'Could not open a camera. Connect one and check browser permissions.';
+                if (liveMessage) {
+                    liveMessage.textContent = reason;
+                }
+                updateStatus({ name: 'Camera unavailable', status: reason });
+            });
+
+        window.addEventListener('pagehide', () => {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach((track) => track.stop());
+            }
+        });
     }
 });
