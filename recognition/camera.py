@@ -6,9 +6,10 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from database.db import get_known_embeddings, mark_attendance
+from database.db import get_known_embeddings, get_student_by_id, mark_attendance
 from recognition.face_detector import detect_faces
 from recognition.face_matcher import find_best_match
+from notifications.sms_service import send_sms
 
 logger = logging.getLogger(__name__)
 
@@ -103,7 +104,26 @@ class CameraManager:
                         cv2.putText(frame, f"{student_name} ({student_id}) {confidence}", (x1, max(0, y1 - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
                         if mark_attendance(student_id, student_name, self.camera_id, confidence):
-                            self._current_status(student_name, student_id, confidence, "Attendance Marked")
+                            try:
+                                student_record = get_student_by_id(student_id)
+                                if student_record:
+                                    sms_result = send_sms(
+                                        student_name,
+                                        student_id,
+                                        student_record["phone"],
+                                    )
+                                    status = (
+                                        "Attendance Marked"
+                                        if sms_result["success"]
+                                        else "Attendance Marked - SMS Not Sent"
+                                    )
+                                else:
+                                    status = "Attendance Marked - Student Contact Missing"
+                                    logger.error("Student record missing for recognized ID %s.", student_id)
+                            except (ValueError, RuntimeError):
+                                status = "Attendance Marked - SMS Failed"
+                                logger.exception("Attendance was recorded, but SMS delivery failed for %s.", student_id)
+                            self._current_status(student_name, student_id, confidence, status)
                     else:
                         self._current_status("Unknown", "", 0.0, "Unknown")
                         cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 2)

@@ -6,3 +6,4 @@ insightface==0.7.3
 onnxruntime==1.19.0
 Pillow==10.4.0
 gunicorn==23.0.0
+twilio==9.4.3

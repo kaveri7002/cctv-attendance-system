@@ -202,8 +202,12 @@ def test_sms():
     student_name = payload.get("student_name", "Student")
     student_id = payload.get("student_id", "STU999")
     phone_number = payload.get("phone", os.getenv("DEMO_SMS_RECIPIENT", "+15551234567"))
-    result = send_sms(student_name, student_id, phone_number)
-    return jsonify({"success": result.get("success", False), "message": result.get("message", "")})
+    try:
+        result = send_sms(student_name, student_id, phone_number)
+        return jsonify(result), (200 if result["success"] else 503)
+    except (ValueError, RuntimeError) as exc:
+        logger.error("Test SMS failed: %s", exc)
+        return jsonify({"success": False, "sent": False, "error": str(exc)}), 503
 
 
 @app.route("/api/simulate_attendance", methods=["POST"])
@@ -222,8 +226,29 @@ def simulate_attendance():
     if not result:
         return jsonify({"success": False, "error": "Student already marked present today."}), 400
 
-    send_sms(student["name"], student_id, student["phone"])
-    return jsonify({"success": True, "message": f"Attendance marked for {student['name']}."})
+    try:
+        sms_result = send_sms(student["name"], student_id, student["phone"])
+    except (ValueError, RuntimeError) as exc:
+        logger.error("Attendance recorded, but notification failed for %s: %s", student_id, exc)
+        return jsonify({
+            "success": True,
+            "attendance_marked": True,
+            "sms_sent": False,
+            "message": f"Attendance was marked for {student['name']}, but the SMS was not sent.",
+            "sms_error": str(exc),
+        }), 202
+
+    return jsonify({
+        "success": True,
+        "attendance_marked": True,
+        "sms_sent": sms_result["success"],
+        "message": (
+            f"Attendance was marked for {student['name']} and the SMS was sent."
+            if sms_result["success"]
+            else f"Attendance was marked for {student['name']}, but the SMS was not sent."
+        ),
+        "sms_detail": sms_result.get("detail"),
+    }), (200 if sms_result["success"] else 202)
 
 
 init_db()
