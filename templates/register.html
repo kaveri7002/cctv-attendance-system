@@ -49,8 +49,14 @@
                         <input type="email" name="email" required placeholder="Email address">
                     </div>
                 </div>
+                <div class="field-group camera-selector-group">
+                    <label for="registrationCamera">Camera</label>
+                    <select id="registrationCamera" aria-label="Select camera">
+                        <option value="">Detecting cameras…</option>
+                    </select>
+                </div>
                 <div class="camera-box">
-                    <video id="camera" autoplay playsinline muted></video>
+                    <video id="camera" autoplay playsinline muted aria-label="Student registration camera preview"></video>
                     <canvas id="snapshotCanvas" width="640" height="480" style="display:none"></canvas>
                 </div>
 

@@ -22,7 +22,13 @@
         <section class="panel live-panel">
             <h2>Live Entry Monitor</h2>
             <p class="section-note">Allow camera access. Attendance is marked after the same registered face is confirmed across three frames.</p>
-            <video id="cameraFeed" autoplay playsinline muted></video>
+            <div class="field-group camera-selector-group">
+                <label for="liveCamera">Camera</label>
+                <select id="liveCamera" aria-label="Select camera">
+                    <option value="">Detecting cameras…</option>
+                </select>
+            </div>
+            <video id="cameraFeed" autoplay playsinline muted aria-label="Live attendance camera preview"></video>
             <canvas id="frameCanvas" width="640" height="480" hidden></canvas>
             <p id="liveMessage" class="message-box" role="status">Requesting camera access…</p>
         </section>

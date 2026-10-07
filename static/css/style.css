@@ -115,6 +115,15 @@ input {
     color: white;
 }
 
+select {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #475569;
+    background: #0f172a;
+    color: white;
+}
+
 button {
     cursor: pointer;
     border: none;
@@ -228,6 +237,10 @@ th, td {
     border-radius: 12px;
     overflow: hidden;
     border: 1px solid rgba(148,163,184,0.22);
+}
+
+.camera-selector-group {
+    margin: 24px 0 0;
 }
 
 #camera {
