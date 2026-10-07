@@ -108,11 +108,11 @@ For a production deployment, set unique values in `.env` and do not share them i
 
 1. Push this repository to GitHub.
 2. In Render, choose **New > Blueprint**, connect the GitHub repository, and approve the `render.yaml` blueprint.
-3. Render creates a paid web service with a persistent disk mounted at `/var/data`. The blueprint generates a secret key and admin password; view the generated `ADMIN_PASSWORD` in the service's environment settings.
+3. Render creates a free web service. The blueprint generates a secret key and admin password; view the generated `ADMIN_PASSWORD` in the service's environment settings.
 4. Once deployment finishes, open the service URL and sign in with username `campus-admin` and the generated password.
 5. Add SMS provider credentials through the Render environment settings if real SMS is required. Do not put credentials in GitHub.
 
-The disk preserves the SQLite database across deploys and restarts. The hosted service cannot access a webcam physically attached to your computer. To use an IP CCTV camera, set `CAMERA_SOURCE` to a stream URL reachable by the Render service; the camera must permit remote access and OpenCV must support its stream protocol. Leave it unset/default for the placeholder feed.
+The free service uses SQLite on ephemeral storage: student and attendance records can be lost when Render restarts or redeploys the service. Do not use this free setup for production attendance records; use a persistent paid disk or an external managed database for durable storage. Free web services may also spin down when idle. The hosted service cannot access a webcam physically attached to your computer. To use an IP CCTV camera, set `CAMERA_SOURCE` to a stream URL reachable by the Render service; the camera must permit remote access and OpenCV must support its stream protocol. Leave it unset/default for the placeholder feed.
 
 The Render service uses Gunicorn and the `/health` endpoint for health checks. `TEST_MODE` is disabled in the production blueprint so sample students are not inserted.
 
