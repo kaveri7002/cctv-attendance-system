@@ -1,4 +1,5 @@
 import logging
+import os
 import numpy as np
 
 logger = logging.getLogger(__name__)
@@ -10,8 +11,8 @@ def encode_face(frame, face_bbox):
     except Exception as exc:  # pragma: no cover
         raise RuntimeError("InsightFace is required for embedding generation.") from exc
 
-    analysis = FaceAnalysis(name="buffalo_l")
-    analysis.prepare(ctx_id=0, det_size=(640, 640))
+    analysis = FaceAnalysis(name=os.getenv("INSIGHTFACE_MODEL", "buffalo_s"))
+    analysis.prepare(ctx_id=-1, det_size=(640, 640))
     detected = analysis.get(frame, max_num=1)
     if not detected:
         raise ValueError("No face was detected in the supplied image.")

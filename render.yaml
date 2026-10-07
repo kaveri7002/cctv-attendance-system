@@ -19,3 +19,5 @@ services:
         value: demo
       - key: CAMERA_SOURCE
         value: "0"
+      - key: INSIGHTFACE_MODEL
+        value: buffalo_s

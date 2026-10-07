@@ -6,7 +6,7 @@ This project provides a complete Flask-based CCTV attendance system for a colleg
 
 Open the deployed app: https://cctv-attendance-system.onrender.com
 
-The free Render service may take a little time to wake after inactivity. Do not use the demo with real student data; the free service's SQLite storage is ephemeral.
+The free Render service may take a little time to wake after inactivity. Do not use the demo with real student data; the free service's SQLite storage is ephemeral. The app defaults to InsightFace's smaller `buffalo_s` model to reduce memory use on the free instance. Embeddings created with the previous `buffalo_l` model are not compatible, so re-register students after changing models.
 
 ## Features
 
@@ -120,7 +120,7 @@ For a production deployment, set unique values in `.env` and do not share them i
 
 The free service uses SQLite on ephemeral storage: student and attendance records can be lost when Render restarts or redeploys the service. Do not use this free setup for production attendance records; use a persistent paid disk or an external managed database for durable storage. Free web services may also spin down when idle. On the hosted Live CCTV page, the browser requests access to the visitor's camera and sends temporary JPEG frames to the app for recognition; the service itself cannot directly access a webcam physically attached to your computer. Allow camera access when prompted. Attendance is recorded after the same known face is confirmed in three consecutive frames. To use an IP CCTV camera, set `CAMERA_SOURCE` to a stream URL reachable by the Render service; the camera must permit remote access and OpenCV must support its stream protocol.
 
-The Render service uses Gunicorn and the `/health` endpoint for health checks. `TEST_MODE` is disabled in the production blueprint so sample students are not inserted.
+The Render service uses Gunicorn and the `/health` endpoint for health checks. `TEST_MODE` is disabled in the production blueprint so sample students are not inserted. The face model loads on the first recognition request, so the first request after the service wakes may take longer than later requests.
 
 ## Registering students
 
